@@ -1,0 +1,227 @@
+*{
+    
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    padding:2px;
+    z-index: 0;
+    text-align: center;
+    align-content: center;
+    justify-content: center;
+    /* padding: 20px; */
+}
+
+header{
+    width:100%;
+    background-color: white;
+    text-align: center;
+    z-index: 2;
+    border-radius: 4px;
+    box-sizing: border-box;
+    position:fixed;
+    top:0;
+    margin-bottom:15px;
+}
+ .main-header-container{
+    width:100%;
+    display: flex;
+    background-color: #ffffff;
+    box-sizing: border-box;
+}
+.main-header-container a{
+    background-color: #ffffff;
+}
+.main-header-container section{
+    background-color: #ffffff;
+    align-content: flex-end;
+    justify-content: flex-end;
+    position: sticky;
+    top: 0;
+}
+.header-section{
+    width: 50%;
+    background-color: #ffffff;
+}
+#header-navigation{
+    text-align: right;
+    padding: 2px;
+}
+#newreports{
+    background-color: #ffffff;
+    border: none;
+}
+#logo{
+    text-align: left;
+}
+.main-input-and-output{
+    width: 90vw;
+    display: flex;
+    align-content: space-between;
+    justify-content: space-between;
+    /* border:2px solid red; */
+ }
+main{
+    padding: 2%;
+}
+.main{
+    width: 49%;
+    text-align: left;
+}
+#inputs, #outputs {
+    background-color: #ffffff; /* Ensure a white background for contrast */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+    border-radius: 8px; /* Slightly rounded corners */
+    /* padding: 20px; Add space inside the sections */
+    margin-bottom: 25px; /* Add space between sections and neighboring elements */
+    text-align: left; /* Keep content aligned to the left */
+    
+}
+#outputs{
+    text-align: left;
+} 
+ #inputs{
+    box-sizing: border-box; 
+    align-content: normal;
+    justify-content:normal;
+}
+    
+
+form{
+    width:100%;
+    padding: 10px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    text-align: left;
+    margin-bottom: 80px;
+    height: 60%;
+}
+.form{
+    width:100%;
+    text-align: left;
+    
+}
+.form input{
+    padding: 25px;
+    width:80%;
+    border: 2px solid lightgray;
+    background-color: #ffffff;
+    display: block;
+    border-radius: 5px;
+    margin: 5px;    
+}
+.form label{
+    font-weight: bold;
+}
+#outputs{
+    text-align: left;
+    background-color: #fff;
+    border-radius: 5px; 
+    padding: 5px;   
+}
+#share{
+    margin-left: 40%;
+    padding:20px;
+}
+#print{
+    padding:20px; 
+    margin-bottom: 1.2em;
+}
+#submitButton{
+    margin-left: 40%;
+    margin-top: 20%;
+    padding: 20px;    
+}
+#results{
+    height: 60%;
+    margin-bottom: 1%;
+    background-color:#ffffff;
+}
+.btn{
+    background-color: navy;
+    padding: 10px;
+    font-weight: bold;
+    border:none;
+    border-radius: 5px;
+    color: #fff;
+}
+span{
+    font-weight: bold;
+    font: 1.5rem;
+}
+hr{
+    margin:10px 2px;
+    opacity: 0.2;
+}
+ #history,#statistics{
+    align-content: normal;
+    justify-content: left;
+ }
+ #history h5,#statistics h5{
+    margin-top: 0px;
+    /* border: 3px solid blue; */
+ }
+.history{
+    display: flex;
+    box-sizing: border-box;
+    margin-top: 20px;
+    min-height: 400px;
+}
+ 
+.history section{
+    width: 49%;
+    box-sizing: border-box;
+    /* border: 3px solid blue;     */
+}
+#visualizationsDiv{
+    /* border: 3px solid blue; */
+    width: 100%;
+    display: flex;
+    box-sizing: border-box;
+    height: 83%;
+    align-content: space-around;
+}
+.graphs{
+    /* border: 3px solid green; */
+    width: 50%;
+    height: 96%;
+    max-height: 400px;
+    box-sizing: border-box;
+    margin: 1%;
+    align-content: normal;
+    padding: 5px;
+    
+}
+.graphs img{
+    object-fit: cover;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); 
+}
+
+#statistics{
+    align-items: center;
+    justify-items: center;
+}
+
+footer{
+    width: 100%;
+    min-height: 100px;
+    background-color: #fff;
+    border-radius: 0 0 5px 5px;
+   
+}
+footer p,h6{
+    background-color: #ffffff;
+}
+#contentToPrint * {
+    text-align: left !important;
+}  
+
+#preview-container {
+    margin-top: 10px;
+    text-align: center;
+}
+
+#image-preview {
+    max-height: 300px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-top: 10px;
+}

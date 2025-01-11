@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Basic styles for body and canvas */
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff;
+              
+        }
+
+        canvas {
+            position: fixed; /* Make canvas a background*/
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Send canvas to the back */
+        }
+
+        /* Ensure other content is above the canvas*/ 
+        header, main, footer {
+            position: relative;
+            z-index: 1;
+        }
+        .results-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #777;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+        .no-data {
+            text-align: center;
+            margin-top: 20px;
+            color: #888;
+        }
+        a{
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+    </style>
+</head>
+<body>
+    <canvas id="animationCanvas"></canvas>
+    <header>
+        <div class="main-header-container">
+            <section id="logo" class="header-section">
+                <img src="logo.png" alt="logo" width="100px" style="border-radius: 50% 50% 5% 5%;">
+                <h4 style="font-weight: bolder; font-family: 'Arial', sans-serif; display: inline-block;">DigitalHealthLink</h4>
+            </section>
+            <section id="header-navigation" class="header-section">
+                <section id="reports">
+                    <select name="reports" id="newreports">
+                        <option value="reports">Reports</option>
+                        <option value="generateReport">Create Report</option>
+                        <option value="generateAndShare">Share Report</option>
+                    </select>  
+                    <a href="#statistics">Statistics</a>
+                    <a href="#history">History</a>
+                    <button onclick="testConnection()">Test Server</button>
+                </section>                    
+            </section>
+        </div>
+    </header>
+    <main>
+        <section class="main-input-and-output">
+            <section id="inputs" class="main">
+                <p><span id="input-top">Enter screening details</span></p>
+                <form action="" method="post">
+                    <div class="form">
+                        <label for="Sample-label">Sample name:</label>
+                        <input type="text" id="Sample-label" name="Sample-label" required> 
+                    </div>
+                    <div class="form">
+                        <label for="patient-id">Patient's number:</label>
+                        <input type="text" id="patient-id" name="patient-id" required> <br>
+                    </div>
+                    <div class="form">
+                        <label for="image-sample">Sample upload:</label>
+                        <input type="file" name="image-sample" id="image-sample" accept="image/*">
+                        <div id="preview-container">
+                            <img id="image-preview" src="" alt="" style="max-width: 100%; display: none;">
+                        </div>
+                    </div>  
+                    <button type="submit" class="btn" id="submitButton">Screen Now</button>                      
+                    
+                </form>
+            </section>
+            <section id="outputs" class="main">
+                <p><span id="outputTop">Screening results</span></p>
+                <div id="contentToPrint">
+                     <!-- Header section -->
+<div class="results-header">
+    <h1>Results</h1>
+</div>
+
+<!-- Container for results -->
+<div id="results-container">
+    <div class="result-item">
+        <div>
+            <h3 class="result-label">Filename:</h3>
+            <p id="filename"></p>
+        </div>
+    </div>
+
+    <div class="result-item">
+        <div>
+            <h3 class="result-label">Sample Name:</h3>
+            <p id="sample-name"></p>
+        </div>
+        <div>
+            <h3 class="result-label">Patient Number:</h3>
+            <p id="patient-number"></p>
+        </div>
+    </div>
+
+    <div class="result-item">
+        <div>
+            <h3 class="result-label">Detections:</h3>
+            <p id="detections"></p>
+        </div>
+    </div>
+</div>
+                </div>
+                <button id="share" class="btn" onclick="alert('button clicked')">Share</button> 
+                <button id="print" class="btn" >Print</button>
+            </section>
+        </section>
+        <hr>
+        <section class="history">
+            <section id="history">
+                <h5>History</h5>
+                <table id="historyTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Filename</th>
+                            <th>Detections</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be dynamically added here -->
+                    </tbody>
+                </table>
+            </section>
+            <section id="statistics">
+                <h5>Statistics</h5>
+                <div id="visualizationsDiv">
+                    <div class="graphs" ><img src="" alt="" width="100%" id="barChart"></div>
+                    <div class="graphs"><img src="" alt="" width="100%" id="pieChart"></div>
+                </div>
+            </section>
+        </section>
+    </main>
+    <footer>
+        <p>Making screening malaria easy</p>
+        <h6>&copy; DigitalHealthLink</h6>
+    </footer>
+    <script>
+        document.getElementById('image-sample').addEventListener('change', function(event) {
+            const file = event.target.files[0]; // Get the selected file
+        
+            if (file) {
+                const reader = new FileReader();
+        
+                // When the file is loaded, set it as the source for the image preview
+                reader.onload = function(e) {
+                    const previewImage = document.getElementById('image-preview');
+                    previewImage.src = e.target.result; // Set the image source
+                    previewImage.style.display = 'block'; // Make the image visible
+                };
+        
+                reader.readAsDataURL(file); // Read the file as a Data URL
+            } else {
+                // Clear the preview if no file is selected
+                const previewImage = document.getElementById('image-preview');
+                previewImage.src = '';
+                previewImage.style.display = 'none';
+            }
+        });
+        
+        document.getElementById('submitButton').addEventListener('click', async () => {
+            // Get form elements
+            const sampleName = document.getElementById('Sample-label').value;
+            const patientId = document.getElementById('patient-id').value;
+            const imageFile = document.getElementById('image-sample').files[0];
+            const submitButton = document.getElementById('submitButton');
+        
+            // Ensure all fields are filled
+            if (!sampleName || !patientId || !imageFile) {
+                alert("Please fill out all fields and upload an image.");
+                return;
+            }
+        
+            // Show loading state
+            submitButton.disabled = true;
+            submitButton.textContent = 'Processing...';
+        
+            // Create FormData object
+            const formData = new FormData();
+            formData.append('sample_name', sampleName);
+            formData.append('patient_number', patientId);
+            formData.append('image', imageFile);
+        
+            try {
+                const response = await fetch('http://127.0.0.1:5000/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+        
+                // Handle non-OK responses
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Server error: ${response.status} - ${errorText}`);
+                }
+        
+                // Parse JSON response
+                const result = await response.json();
+                console.log('Received results:', result);
+        
+                // Format detections for display
+                const formattedDetections = result.detections.map(detection => {
+                    if (detection.class !== undefined) {
+                        const confidence = (detection.confidence * 100).toFixed(1);
+                        return `Trophozoite (${confidence}% confidence)`;
+                    }
+                    return detection.message || 'Unknown detection';
+                });
+        
+                // Update the results section
+                const contentToPrint = document.getElementById('contentToPrint');
+                contentToPrint.innerHTML = `
+                    <!-- Header section -->
+                    <div class="results-header">
+                        <h1>Results</h1>
+                    </div>
+        
+                    <!-- Filename -->
+                    <div class="result-item">
+                        <div>
+                            <h3 class="result-label">Filename:</h3>
+                            <p>${result.filename}</p>
+                        </div>
+                    </div>
+        
+                    <!-- Sample and Patient Info -->
+                    <div class="result-item">
+                        <div>
+                            <h3 class="result-label">Sample Name:</h3>
+                            <p>${result.sample_name}</p>
+                        </div>
+                        <div>
+                            <h3 class="result-label">Patient Number:</h3>
+                            <p>${result.patient_number}</p>
+                        </div>
+                    </div>
+        
+                    <!-- Detections -->
+                    <div class="result-item">
+                        <div>
+                            <h3 class="result-label">Detections:</h3>
+                            <p>${formattedDetections.length} detection(s): ${formattedDetections.join(', ')}</p>
+                        </div>
+                    </div>
+
+                `;
+        
+                // Re-attach print handler
+                document.getElementById('print').onclick = () => {
+                    const printContent = document.getElementById('contentToPrint');
+                    const originalContents = document.body.innerHTML;
+                    document.body.innerHTML = printContent.innerHTML;
+                    window.print();
+                    document.body.innerHTML = originalContents;
+                    // Reattach event listeners after printing
+                    attachEventListeners();
+                };
+        
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                const contentToPrint = document.getElementById('contentToPrint');
+                contentToPrint.innerHTML = `
+                    <div class="results-header">
+                        <h1>Error</h1>
+                    </div>
+                    <div class="result-item">
+                        <div>
+                            <h3 class="result-label">Error Details:</h3>
+                            <p class="text-red-600">${error.message}</p>
+                        </div>
+                    </div>
+                `;
+            } finally {
+                // Reset button state
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit';
+            }
+        });
+        
+        // Function to attach all event listeners
+        function attachEventListeners() {
+            // Share button handler
+            document.getElementById('share').onclick = () => {
+                alert('button clicked');
+            };
+        
+            // Print button handler
+            document.getElementById('print').onclick = () => {
+                const printContent = document.getElementById('contentToPrint');
+                const originalContents = document.body.innerHTML;
+                document.body.innerHTML = printContent.innerHTML;
+                window.print();
+                document.body.innerHTML = originalContents;
+                // Reattach event listeners after printing
+                attachEventListeners();
+            };
+        }
+        
+        // Initial attachment of event listeners
+        document.addEventListener('DOMContentLoaded', attachEventListeners);
+        
+        // Function to parse the detections string safely
+function parseDetections(detectionsStr) {
+    try {
+        // If the string starts with a single quote, replace with double quotes
+        const jsonStr = detectionsStr.replace(/'/g, '"');
+        return JSON.parse(jsonStr);
+    } catch (error) {
+        console.error('Error parsing detections:', error);
+        return [];
+    }
+}
+
+// Function to format detection information
+function formatDetection(detection) {
+    if (!detection) return 'No detection data';
+    
+    const classType = detection.class === 1 ? 'Trophozoite' : `Class ${detection.class}`;
+    const confidence = (detection.confidence * 100).toFixed(1);
+    const position = detection.bbox ? 
+        `at (${Math.round(detection.bbox[0])}, ${Math.round(detection.bbox[1])})` : 
+        'position unknown';
+    
+    return `${classType} (${confidence}% confidence) ${position}`;
+}
+
+// Function to update the table with new data
+function updateTable(records) {
+    const tbody = document.querySelector('#historyTable tbody');
+    tbody.innerHTML = ''; // Clear existing rows
+    
+    records.forEach(record => {
+        const row = document.createElement('tr');
+        const detections = parseDetections(record.detections);
+        
+        // Create cell content
+        const detectionsHtml = detections.map((detection, index) => 
+            `<div class="detection-item mb-1 ${index !== detections.length - 1 ? 'border-b pb-1' : ''}">
+                ${formatDetection(detection)}
+            </div>`
+        ).join('');
+
+        // Add row content
+        row.innerHTML = `
+            <td class="border px-4 py-2 text-center">${record.id}</td>
+            <td class="border px-4 py-2">${record.filename}</td>
+            <td class="border px-4 py-2">
+                <div class="detection-list max-h-40 overflow-y-auto">
+                    ${detectionsHtml || 'No detections found'}
+                </div>
+            </td>
+        `;
+        
+        tbody.appendChild(row);
+    });
+}
+
+// Function to fetch latest records
+async function fetchLatestRecords() {
+    try {
+        const response = await fetch('http://127.0.0.1:5000/history');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const records = await response.json();
+        updateTable(records);
+
+    } catch (error) {
+        console.error('Error fetching records:', error);
+        const tbody = document.querySelector('#historyTable tbody');
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="3" class="border px-4 py-2 text-center text-red-600">
+                    Error loading data. Please try again later.
+                </td>
+            </tr>
+        `;
+    }
+}
+
+// Function to start periodic fetching
+function startPeriodicFetch() {
+    // Initial fetch
+    fetchLatestRecords();
+    
+    // Set up interval
+    setInterval(fetchLatestRecords, 5000);
+}
+
+// Add styles and start fetching when document is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Style the table
+    const table = document.getElementById('historyTable');
+    table.className = 'min-w-full bg-white border border-gray-300 shadow-sm rounded-lg overflow-hidden';
+    
+    // Style the header
+    const thead = table.querySelector('thead');
+    thead.className = 'bg-gray-50';
+    
+    const headerRow = thead.querySelector('tr');
+    headerRow.querySelectorAll('th').forEach(th => {
+        th.className = 'px-4 py-2 border text-left font-semibold text-gray-600';
+    });
+    
+    // Add some basic CSS
+    const style = document.createElement('style');
+    style.textContent = `
+        .detection-item {
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .detection-list {
+            scrollbar-width: thin;
+            scrollbar-color: #CBD5E0 #EDF2F7;
+        }
+        .detection-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        .detection-list::-webkit-scrollbar-track {
+            background: #EDF2F7;
+        }
+        .detection-list::-webkit-scrollbar-thumb {
+            background-color: #CBD5E0;
+            border-radius: 4px;
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Start fetching data
+    startPeriodicFetch();
+});
+        
+        // Function to fetch and update visualizations
+        async function fetchVisualizations() {
+            try {
+                // Make the API call to the Flask backend
+                const response = await fetch('http://127.0.0.1:5000/analysis-visualizations');
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.statusText}`);
+                }
+        
+                const data = await response.json();
+        
+                // Update the bar chart in the frontend
+                const barChartImg = document.getElementById('barChart');
+                if (barChartImg) {
+                    barChartImg.src = data.bar_chart;
+                } else {
+                    console.error("Bar chart container not found");
+                }
+        
+                // Update the pie chart in the frontend
+                const pieChartImg = document.getElementById('pieChart');
+                if (pieChartImg) {
+                    pieChartImg.src = data.pie_chart;
+                } else {
+                    console.error("Pie chart container not found");
+                }
+        
+                console.log("Visualizations updated successfully.");
+            } catch (error) {
+                console.error("Error fetching visualizations:", error);
+            }
+        }
+        // Call the function initially and set an interval for 15 minutes (900000 milliseconds)
+        fetchVisualizations();
+        setInterval(fetchVisualizations, 900000);
+        async function testConnection() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/test');
+                const data = await response.json();
+                alert('Server connected: ' + JSON.stringify(data));
+            } catch (error) {
+                alert('Connection failed: ' + error);
+            }
+        }
+        async function fetchLatestResult() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/latest-record');
+                
+                if (!response.ok) {
+                    console.error(`Error: ${response.status} - ${response.statusText}`);
+                    return;
+                }
+                
+                const data = await response.json();
+                const resultsContainer = document.getElementById('results-container');
+                
+                if (response.status === 200 && data.id) {
+                    // Update the UI with the latest record
+                    document.getElementById('filename').textContent = data.filename || 'N/A';
+                    document.getElementById('sample-name').textContent = data.sample_name || 'N/A';
+                    document.getElementById('patient-number').textContent = data.patient_number || 'N/A';
+        
+                    // Handle detections as a dictionary
+                    const detections = data.detections || {};
+                    const detectionEntries = Object.entries(detections).map(
+                        ([key, value]) => `${key}: ${value}`
+                    );
+                    document.getElementById('detections').textContent = `${detectionEntries.length} detection(s): ${detectionEntries.join(', ')}`;
+        
+                    resultsContainer.style.display = 'block';
+                } else {
+                    // No recent records available or no valid ID
+                    console.log(data.message || 'No recent records available.');
+                    resultsContainer.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error fetching latest record:', error);
+            }
+        }
+        
+    
+        // Refresh every 2 seconds
+        setInterval(fetchLatestResult, 2000);
+    
+        // Fetch immediately on load
+        fetchLatestResult();
+    </script>
+    <script src="animations.js"></script>
+</body>
+
+</html>
